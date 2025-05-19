@@ -1,0 +1,74 @@
+name: Build & Push Docker image to ECR
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - SimpleDockerApp/**
+
+env:
+  ECR_REPOSITORY: simple-docker-app
+
+jobs:
+  prepare-ecr:
+    runs-on: ubuntu-latest
+    environment: aws
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region:            ${{ secrets.AWS_REGION }}
+
+      - name: Ensure ECR repository exists
+        run: |
+          set -e
+          REPO_NAME="${{ env.ECR_REPOSITORY }}"
+          REGION="${{ secrets.AWS_REGION }}"
+
+          echo "Checking if ECR repo '$REPO_NAME' exists in region '$REGION'..."
+          if aws ecr describe-repositories --repository-names "$REPO_NAME" --region "$REGION" > /dev/null 2>&1; then
+            echo "ECR repository '$REPO_NAME' already exists."
+          else
+            echo "ECR repository '$REPO_NAME' does not exist. Creating..."
+            aws ecr create-repository --repository-name "$REPO_NAME" --region "$REGION"
+            echo "ECR repository '$REPO_NAME' created."
+          fi
+
+  build-and-push:
+    runs-on: ubuntu-latest
+    environment: aws
+    needs: prepare-ecr
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region:            ${{ secrets.AWS_REGION }}
+
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag & push image
+        run: |
+          IMAGE_TAG=${{ github.sha }}
+          REGISTRY=${{ steps.login-ecr.outputs.registry }}
+
+          docker build \
+            -t $REGISTRY/${{ env.ECR_REPOSITORY }}:$IMAGE_TAG \
+            SimpleDockerApp
+
+          docker tag \
+            $REGISTRY/${{ env.ECR_REPOSITORY }}:$IMAGE_TAG \
+            $REGISTRY/${{ env.ECR_REPOSITORY }}:latest
+
+          docker push $REGISTRY/${{ env.ECR_REPOSITORY }}:$IMAGE_TAG
+          docker push $REGISTRY/${{ env.ECR_REPOSITORY }}:latest
