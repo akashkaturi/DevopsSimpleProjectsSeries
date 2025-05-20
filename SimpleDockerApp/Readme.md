@@ -203,4 +203,3 @@ You’ve now:
 * Pulled and ran your image from ECR
 
 # Happy coding! 🎉 Good job.
-

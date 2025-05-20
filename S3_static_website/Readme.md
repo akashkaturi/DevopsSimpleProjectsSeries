@@ -2,25 +2,25 @@
 # Static Site Deployment to AWS S3
 
 ## Table of Contents
-- [Prerequisites](#prerequisites)  
-- [1. Configure Environment Variables](#1-configure-environment-variables)  
-- [2. Install AWS CLI](#2-install-aws-cli)  
-- [3. Configure AWS CLI](#3-configure-aws-cli)  
-- [4. Create S3 Bucket](#4-create-s3-bucket)  
-- [5. Verify Bucket Existence](#5-verify-bucket-existence)  
-- [6. Enable Static Website Hosting](#6-enable-static-website-hosting)  
-- [7. Configure Public Access](#7-configure-public-access)  
-- [8. Sample Vite Application](#8-sample-vite-application)  
-- [9. Build and Upload Site](#9-build-and-upload-site)  
-- [10. Access Your Site](#10-access-your-site)  
-- [11. Cleanup Resources](#11-cleanup-resources)  
+- [Prerequisites](#prerequisites)
+- [1. Configure Environment Variables](#1-configure-environment-variables)
+- [2. Install AWS CLI](#2-install-aws-cli)
+- [3. Configure AWS CLI](#3-configure-aws-cli)
+- [4. Create S3 Bucket](#4-create-s3-bucket)
+- [5. Verify Bucket Existence](#5-verify-bucket-existence)
+- [6. Enable Static Website Hosting](#6-enable-static-website-hosting)
+- [7. Configure Public Access](#7-configure-public-access)
+- [8. Sample Vite Application](#8-sample-vite-application)
+- [9. Build and Upload Site](#9-build-and-upload-site)
+- [10. Access Your Site](#10-access-your-site)
+- [11. Cleanup Resources](#11-cleanup-resources)
 
 
 ## Prerequisites
-- An AWS account with permission to create S3 buckets and modify policies  
-- AWS CLI installed and configured (see steps 2 & 3)  
-- Node.js & npm (for Vite)  
-- Basic familiarity with shell commands  
+- An AWS account with permission to create S3 buckets and modify policies
+- AWS CLI installed and configured (see steps 2 & 3)
+- Node.js & npm (for Vite)
+- Basic familiarity with shell commands
 
 ---
 
@@ -284,4 +284,3 @@ source .env
 set +o allexport
 ```
 ---
-
